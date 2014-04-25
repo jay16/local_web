@@ -2,9 +2,9 @@
 
 以ruby-doc为例
 
-1. http://www.ruby-doc.org/downloads下载ruby对应版本的doc到本地,并解压
-2. 安装sinatra gem, `gem install sinatra` 
-3. 把sinatra.rb,config.ru放至解压文件夹内,然后再在里面创建public文件夹
+1. [ruby-doc](http://www.ruby-doc.org/downloads)下载ruby对应版本的doc到本地,并解压
+2. `gem install sinatra` 
+3. 把`sinatra.rb,config.ru`放至解压文件夹内,然后再在里面创建public文件夹
 4. 执行命令`thin start -p 80`或使用nginx启动。
 5. 浏览器中输入127.0.0.1
 
