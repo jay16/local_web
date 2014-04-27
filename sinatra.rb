@@ -10,7 +10,7 @@ end
 # render file within 10 levels
 # deal with [css, js, html]
 (1..10).each do |level|
-  get_path = (1..level).map { |t| ":level" + t.to_s }.join("/")
+  get_path = (1..level).map(&:to_s).map(&":level".method(:+)).join("/")
   get "/#{get_path}" do
     render_file = find_exist_first_file
     send_file render_file if render_file and File.exist?(render_file)
