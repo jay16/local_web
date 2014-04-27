@@ -74,10 +74,10 @@ template :index do
               %a{onclick: "LocalWeb.refresh();"} 刷新
     .container{style: "margin-top: 55px;"}
       .row
-        .col-sm-8.col-sm-offset-2
-          %table.table.table-hover
-            -@local_webs.each do |local_web|
-              %tr
-                %td= link_to local_web, "/"+local_web, class: "btn btn-lg btn-primary btn-shadow", style: "min-width: 200px;text-align:left;"
+        -@local_webs.each_slice(10).map.each do |cols|
+          .col-sm-3
+            .row
+              -cols.each do |col|
+                = link_to col, "/"+col, class: "btn btn-lg btn-primary btn-shadow", style: "min-width: 200px;text-align:left;margin-bottom:10px;"
 )
 end
