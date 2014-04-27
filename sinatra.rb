@@ -7,6 +7,10 @@ get "/" do
   haml :index
 end 
 
+get "/refresh" do
+  ENV["APP_LOCAL_WEBS"] = Dir.glob(File.join(ENV["LOCAL_WEB_DIR"], "*")).find_all(&File.method(:directory?)).join(" ")
+  redirect "/"
+end
 # render file within 10 levels
 # deal with [css, js, html]
 # get "/:level1/:level2/..."
@@ -56,12 +60,18 @@ template :index do
   %head
     %title 本地资源库
     = stylesheet_link_tag "/assets/css/bootstrap.min.css"
+    = javascript_include_tag "/assets/js/jquery.1.9.0.js"
+    = javascript_include_tag "/assets/js/local_web.js"
+
   %body{style: "background-color: #CCE8CC;"}
     %header.navbar.navbar-inverse.navbar-fixed-top.bs-docs-nav{:role => "banner",style: "text-shadow: 0 -1px 0 rgba(0,0,0,.15);background-color: #563d7c;border-color: #463265;box-shadow: 0 1px 0 rgba(255,255,255,.1); color: white;"}
       .container
-        .row
-          .col-sm-8.col-sm-offset-2
-            %a.navbar-brand{:href => "../"} 本地资源
+        .navbar-header
+          %a.navbar-brand{href:"../"} 本地资源
+        %nav.collapse.navbar-collapse.bs-navbar-collapse{:role => "navigation"}
+          %ul.nav.navbar-nav.navbar-right
+            %li
+              %a{onclick: "LocalWeb.refresh();"} 刷新
     .container{style: "margin-top: 55px;"}
       .row
         .col-sm-8.col-sm-offset-2
