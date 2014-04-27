@@ -3,12 +3,13 @@ require "haml"
 
 # local web list
 get "/" do
-  @local_webs = ENV["APP_LOCAL_WEBS"].split.map { |local_web| File.basename(local_web) }
+  @local_webs = ENV["APP_LOCAL_WEBS"].split.map(&File.method(:basename)) 
   haml :index
 end 
 
 # render file within 10 levels
 # deal with [css, js, html]
+# get "/:level1/:level2/..."
 (1..10).each do |level|
   get_path = (1..level).map(&:to_s).map(&":level".method(:+)).join("/")
   get "/#{get_path}" do
@@ -17,23 +18,21 @@ end
   end
 end
 
+# traverse all local-web dir to find first exist file
 def find_exist_first_file
   if !(local_webs = ENV["APP_LOCAL_WEBS"].split.find_all { |dir| File.basename(dir) == params[:level1] }).empty?
     File.join(local_webs.first, "index.html")
   else
-    params_path = params.map(&:first).grep(/level/).sort.map { |k| params[k] }.join("/")
+    params_path = params.map(&:first).grep(/level/).sort.map(&params.method(:fetch)).join("/")
     ENV["APP_LOCAL_WEBS"].split.concat([ENV["APP_ROOT_PATH"]])
-    .map { |web_dir| File.join(web_dir, params_path) }
-    .find_all { |file_path |  File.exists?(file_path) and File.file?(file_path) }
-    .first
+    .map { |dir| File.join(dir, params_path) }
+    .find_all(&File.method(:file?)).first
   end
 end
 
+# form helpers
 helpers do
   def link_to(content, href=content, options={}); tag(:a, content, options.merge(:href => href)); end
-  # Standard open and close tags
-  # EX : tag :h1, "shizam", :title => "shizam"
-  # => <h1 title="shizam">shizam</h1>
   def tag(name, content, options={})
     "<#{name.to_s}" +
       (options.length > 0 ? " #{hash_to_html_attrs(options)}" : '') +
@@ -51,6 +50,7 @@ helpers do
   def stylesheet_link_tag(*args); %Q(<link href="#{args[0]}" media="screen, projection" rel="stylesheet" type="text/css">); end
 end
 
+# views
 template :index do
 %Q(%html
   %head
